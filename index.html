@@ -1,10 +1,81 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Графический редактор Владислава Баницкого</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 </head>
 <body>
-
+<div class="wrapper">
+    <div class="content">
+        <div>
+            <h1>Редактор изображений</h1>
+        </div>
+        <div class="preview-wrapper">
+            <div id="pos-container">
+                <div id="pos">
+                    <canvas id="canvas"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="editor-buttons">
+            <input type="file" id="upload-file" placeholder="Загрузите изображение"
+                   onchange="reader.readAsDataURL(this.file[0])">
+            <label for="upload-file">Загрузите изображение</label>
+            <button id="reset-btn">Сброс</button>
+            <button id="download-btn">Скачать результат</button>
+            <br>
+            <br>
+            <label for="slider">Масштабирование</label>
+            <input type="range" min="1" max="5" step="0.01" id="slider"
+                   oninput="zoomPOS()" onchange="zoomPOS()" value="1">
+            <br>
+            <br>
+            <label for="brightness">Яркость</label>
+            <input type="range" min="-100" max="100" id="brightness" name="brightness"
+                   value="0">
+            <label for="contrast">Контрастность</label>
+            <input type="range" min="-20" max="20" id="contrast" name="contrast"
+                   value="0">
+            <label for="sepia">Сепия</label>
+            <input type="range" min="0" max="100" id="sepia" name="sepia"
+                   value="0">
+            <label for="hue">Оттенок</label>
+            <input type="range" min="0" max="100" id="hue" name="hue"
+                   value="0">
+            <br>
+            <br>
+            <div class="filter">
+                <button id="vintage-btn">Обесцвечивание</button>
+                <button id="noise-btn">Шум</button>
+                <button id="sharpen-btn">Резкость</button>
+                <button id="blur-btn">Размытие</button>
+                <button id="majestic-btn">Majestic</button>
+                <button id="nostalgia-btn">Nostalgia</button>
+                <br>
+                <br>
+                <button id="hdr-btn">HDR</button>
+                <button id="oldpaper-btn">Старинная бумага</button>
+                <button id="pleasant-btn">Pleasant</button>
+                <button id="lomo-btn">Lomo</button>
+                <button id="crossprocess-btn">Crossprocess</button>
+                <br>
+                <br>
+                <button id="pseudo-btn">Псевдоцвет</button>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <p> Владислав Баницкий, 2025</p>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+<script src="index.js"></script>
+<script src="grafi-pseudocolor.js"></script>
 </body>
 </html>
