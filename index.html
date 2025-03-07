@@ -24,17 +24,16 @@
                 </ul>
             </header>
         </div>
-        <div class="preview-wrapper">
-            <div id="pos-container">
-                <div id="pos">
+        <div class="preview-wrapper" id="preview-wrapper">
+            <div class="pos-container" id="pos-container">
+                <div class="pos" id="pos">
                     <canvas id="canvas"></canvas>
                 </div>
             </div>
         </div>
         <div class="editor-buttons">
             <div>
-                <input class="form-control form-control-lg" id="upload-file" type="file"
-                       onchange="reader.readAsDataURL(this.file[0])">
+                <input class="form-control form-control-lg" id="upload-file" type="file">
             </div>
             <button type="button" class="btn btn-danger" id="reset-btn">Сброс</button>
             <button type="button" class="btn btn-success" id="download-btn">Скачать результат</button>

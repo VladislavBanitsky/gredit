@@ -50,19 +50,35 @@ function download(canvas, filename) {
     }
 }
 
+/* Масштабирование изображения */
+    var pos = document.getElementById("pos");
+    var posContainer = document.getElementById("pos-container");
+    var previewWrapper = document.getElementById("preview-wrapper");
+    var slider = document.getElementById("slider");
+    function zoomPOS() {
+        zoomLevel = slider.valueAsNumber;
+        pos.style.transform = "scale("+zoomLevel+")";
+        previewWrapper.style.width = pos.getBoundingClientRect().offsetWidth;
+        previewWrapper.style.height = pos.getBoundingClientRect().offsetHeight;
+        console.log("pos width", pos.getBoundingClientRect().width);
+        console.log("pos height", pos.getBoundingClientRect().height);
+        console.log("previewWrapper width", previewWrapper.getBoundingClientRect().width);
+        console.log("previewWrapper height", previewWrapper.getBoundingClientRect().height);
+    }
+
 /* Сохранение исходных параметров изображения */
 $(document).ready(function() {
     $('input[type=range]').change(applyFilters);
     function applyFilters() {
+        var yark = parseInt($('#brightness').val());
         var cntrst = parseInt($('#contrast').val());
         var sep = parseInt($('#sepia').val());
-        var yark = parseInt($('#brightness').val());
         var hu = parseInt($('#hue').val());
         Caman('#canvas', function () {
             this.revert(false);
+            this.brightness(yark);
             this.contrast(cntrst);
             this.sepia(sep);
-            this.brightness(yark);
             this.hue(hu);
             this.render();
         });
