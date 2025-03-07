@@ -1,0 +1,24 @@
+/* Масштабирование */
+#pos-container {
+    width: 50%;
+    min-height: 300px;
+    border: 0px solid #111;
+    overflow: scroll;
+    margin: 0 auto;
+    margin-top: 1rem;
+}
+
+#pos {
+    width: 100%;
+    text-align: center;
+}
+
+#canvas {
+    max-width: 100%;
+    vertical-align: top;
+}
+
+#preview-wrapper {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
