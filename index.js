@@ -67,6 +67,19 @@ $(document).ready(function() {
             this.render();
         });
     }
+
+    /* Сброс изменений */
+    $('#reset-btn').on('click', function (e) {
+        Caman('#canvas', img, function () {
+            this.revert(false);
+            var cntrst = parseInt($('#contrast').val(0));
+            var sep = parseInt($('#sepia').val(0));
+            var yark = parseInt($('#brightness').val(0));
+            var hue = parseInt($('#hue').val(0));
+            ctx.restore();
+        });
+    });
+
     /* Реализация фильтров */
     Caman.Filter.register("oldpaper", function() {
         this.pinhole();
@@ -74,11 +87,102 @@ $(document).ready(function() {
         this.orangePeel();
         this.render();
     });
-
     $('#oldpaper-btn').on('click', function (e) {
-    Caman('#canvas', img, function () {
-        this.oldpaper().render();
+        Caman('#canvas', img, function () {
+            this.oldpaper().render();
+        });
     });
-});
+
+    Caman.Filter.register("pleasant", function() {
+        this.colorize(60, 105, 218, 10);
+        this.contrast(10);
+        this.sunrise();
+        this.hazyDays()
+        this.render();
+    });
+    $('#pleasant-btn').on('click', function (e) {
+        Caman('#canvas', img, function () {
+            this.pleasant().render();
+        });
+    });
+
+    $('#vintage-btn').on('click', function (e) {
+        Caman('#canvas', img, function () {
+            this.greyscale().render();
+        });
+    });
+
+    $('#noise-btn').on('click', function (e) {
+        Caman('#canvas', img, function () {
+            this.noise(10).render();
+        });
+    });
+
+    $('#sharpen-btn').on('click', function (e) {
+        Caman('#canvas', img, function () {
+            this.sharpen(20).render();
+        });
+    });
+
+    $('#blur-btn').on('click', function (e) {
+        Caman('#canvas', img, function () {
+            this.stackBlur(5).render();
+        });
+    });
+
+    $('#crossprocess-btn').on('click', function (e) {
+        Caman('#canvas', img, function () {
+            this.crossProcess().render();
+        });
+    });
+
+    $('#majestic-btn').on('click', function (e) {
+        Caman('#canvas', img, function () {
+            this.herMajesty().render();
+        });
+    });
+
+    $('#nostalgia-btn').on('click', function (e) {
+        Caman('#canvas', img, function () {
+            this.nostalgia().render();
+        });
+    });
+
+    $('#lomo-btn').on('click', function (e) {
+        Caman('#canvas', img, function () {
+            this.lomo().render();
+        });
+    });
+
+    $('#hdr-btn').on('click', function (e) {
+        Caman('#canvas', img, function () {
+            this.contrast(10);
+            this.contrast(10);
+            this.jarques();
+            this.render();
+        });
+    });
+
+    $('#pseudo-btn').on('click', function (e) {
+        var file = document.querySelector('#upload-file').files[0];
+        var reader = new FileReader();
+        if (file) {
+            fileName = file.name;
+            reader.readAsDataURL(file);
+        }
+        reader.addEventListener("load", function () {
+            img = new Image();
+            img.src = reader.result;
+            img.onload = function () {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0, img.width, img.height);
+                ctx.save();
+                newImage = grafi.pseudocolor(ctx.getImageData(0, 0, img.width, img.height))
+                ctx.putImageData(newImage, 0, 0)
+                $("#canvas").removeAttr("data-caman-id");
+            }
+        }, false);
+    });
 
 })
