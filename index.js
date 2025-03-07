@@ -8,23 +8,8 @@ $(document).ready(function() {
     var mouse = { x: 0, y: 0, is_down: false };  // для отслеживания положения мыши
     var factor = 1.1;  // величина масштабирования
     var viewport = { x: 0, y: 0, scale: 1 };  // положение в левом верхнем углу и масштаб увеличенного изображения
-    var drag = { x: 0, y: 0, dx: 0, dy: 0 };
+    var drag = { x: 0, y: 0, dx: 0, dy: 0 };  // текущее положение и смещение
     var scale_limits = { min: 1, max: 1 };
-
-    img.onload = function () {
-        viewport = { x: 0, y: 0, scale: img.width / canvas.width }
-        scale_limits.max = viewport.scale;
-        canvas.onmousemove = track_mouse;
-        canvas.onwheel = zoom;
-        canvas.onwheelscroll = zoom;
-        canvas.onmousedown = start_drag;
-        canvas.onmouseup = stop_drag;
-        canvas.onmouseout = stop_drag;
-
-        setInterval(function() {
-            draw();
-        }, 1000/60);
-    };
 
     function track_mouse(event) {
         let rectangle = canvas.getBoundingClientRect();
@@ -53,16 +38,18 @@ $(document).ready(function() {
     }
 
     function stop_drag(event) {
-        viewport.x += drag.dx;
+        if (mouse.is_down) {
+            viewport.x += drag.dx;
+            viewport.y += drag.dy;
+        }
         drag.dx = 0;
-        viewport.y = drag.dy;
         drag.dy = 0;
         mouse.is_down = false;
     }
 
     function update() {
         viewport.x = limit_value(viewport.x, 0, img.width - canvas.width * viewport.scale);
-        viewport.y = limit_value(viewport.y, 0, img.heigh - canvas.height * viewport.scale);
+        viewport.y = limit_value(viewport.y, 0, img.height - canvas.height * viewport.scale);
 
         if (mouse.is_down) {
             drag.dx = (drag.x - mouse.x) * viewport.scale;
@@ -73,9 +60,14 @@ $(document).ready(function() {
     }
 
     function draw() {
+        // Очистить весь холст
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Рисуем изображение с учетом масштаба и положения
         ctx.drawImage(img,
             viewport.x + drag.dx, viewport.y + drag.dy, canvas.width * viewport.scale, canvas.height * viewport.scale,
                 0, 0, canvas.width, canvas.height);
+        // Запрашиваем следующий кадр
+        requestAnimationFrame(draw);
       }
 
 
@@ -99,10 +91,11 @@ $(document).ready(function() {
                 canvas.onmousedown = start_drag;
                 canvas.onmouseup = stop_drag;
                 canvas.onmouseout = stop_drag;
+                canvas.width = img.width;
+                canvas.height = img.height;
 
-                setInterval(function() {
-                    draw();
-                }, 1000/60);
+                draw();  // начальный запуск (будет подхвачен через requestAnimationFrame)
+
                 $("#canvas").removeAttr("data-caman-id");
             }
         }, false);
