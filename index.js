@@ -83,8 +83,9 @@ $(document).ready(function() {
             img = new Image();
             img.src = reader.result;
             img.onload = function () {
-                viewport = { x: 0, y: 0, scale: img.width / canvas.width }
-                scale_limits.max = viewport.scale;
+                viewport = { x: 0, y: 0, scale: 1 }
+                scale_limits.max = 1;  // максимальный масштаб
+                scale_limits.min = 0.5;  // минимальный масштаб
                 canvas.onmousemove = track_mouse;
                 canvas.onwheel = zoom;
                 canvas.onwheelscroll = zoom;
