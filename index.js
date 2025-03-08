@@ -8,46 +8,8 @@ var factor = 1.1;  // величина масштабирования
 var viewport = { x: 0, y: 0, scale: 1 };  // положение в левом верхнем углу и масштаб увеличенного изображения
 var drag = { x: 0, y: 0, dx: 0, dy: 0 };  // текущее положение и смещение
 var scale_limits = { min: 1, max: 1 };
-
-/* Загрузка изображения на холст */
-$("#upload-file").on("change", function(){
-    var file = document.querySelector('#upload-file').files[0];
-    var reader = new FileReader();
-    if (file) {
-        fileName = file.name;
-        reader.readAsDataURL(file);
-    }
-    reader.addEventListener("load", function () {
-        img = new Image();
-        img.src = reader.result;
-        img.onload = function () {
-            viewport = { x: 0, y: 0, scale: 1 }
-            scale_limits.max = 1;  // максимальный масштаб
-            scale_limits.min = 0.5;  // минимальный масштаб
-            canvas.onmousemove = track_mouse;
-            canvas.onwheel = zoom;
-            canvas.onwheelscroll = zoom;
-            canvas.onmousedown = start_drag;
-            canvas.onmouseup = stop_drag;
-            canvas.onmouseout = stop_drag;
-            canvas.width = img.width;
-            canvas.height = img.height;
-
-            draw();  // начальный запуск (будет подхвачен через requestAnimationFrame)
-
-            $("#canvas").removeAttr("data-caman-id");
-        }
-    }, false);
-});
-
-/* Скачивание отредактированного изображения */
-$('#download-btn').on('click', function (e) {
-    var fileExtension = fileName.slice(-4);
-    if (fileExtension == '.jpg' || fileExtension == '.png') {
-        var actualName = fileName.substring(0, fileName.length - 4);
-    }
-    download(canvas, actualName + '-edited.jpg');  // вызываем функцию для формирования файла
-});
+var filteredImageData = null; // сохранённое изображение после применения фильтров
+                              //(чтобы не сбивались фильтры при перерисовке кадров)
 
 function download(canvas, filename) {
     var  e;
@@ -115,21 +77,29 @@ function update() {
 }
 
 function draw() {
-    // Очистить весь холст
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // Рисуем изображение с учетом масштаба и положения
-    ctx.drawImage(img,
-        viewport.x + drag.dx, viewport.y + drag.dy, canvas.width * viewport.scale, canvas.height * viewport.scale,
-            0, 0, canvas.width, canvas.height);
-    $("#canvas").removeAttr("data-caman-id");
+    // Если фильтрованное изображение существует, используем его
+    if (filteredImageData) {
+        ctx.putImageData(filteredImageData, 0, 0); // Восстанавливаем фильтрованное изображение на холсте
+    } else {
+        // Очистить весь холст
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        canvas.width = img.width;
+        canvas.height = img.height;
+        // Рисуем изображение с учетом масштаба и положения
+        ctx.drawImage(img,
+            viewport.x + drag.dx, viewport.y + drag.dy, canvas.width * viewport.scale, canvas.height * viewport.scale,
+                0, 0, canvas.width, canvas.height);
+        $("#canvas").removeAttr("data-caman-id");
+    }
     // Запрашиваем следующий кадр
     requestAnimationFrame(draw);
 }
 
 /* Сохранение исходных параметров изображения */
 $(document).ready(function() {
-    /* Сохранение исходных параметров изображения */
+    /* Сохранение параметров изображения, заданных изменением ползунков */
     $('input[type=range]').change(applyFilters);
+
     function applyFilters() {
         var yark = parseInt($('#brightness').val());
         var cntrst = parseInt($('#contrast').val());
@@ -141,9 +111,51 @@ $(document).ready(function() {
             this.contrast(cntrst);
             this.sepia(sep);
             this.hue(hu);
-            this.render();
+            this.render(function() {
+                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+            });
         });
     }
+
+    /* Загрузка изображения на холст */
+    $("#upload-file").on("change", function(){
+        var file = document.querySelector('#upload-file').files[0];
+        var reader = new FileReader();
+        if (file) {
+            fileName = file.name;
+            reader.readAsDataURL(file);
+        }
+        reader.addEventListener("load", function () {
+            img = new Image();
+            img.src = reader.result;
+            img.onload = function () {
+                viewport = { x: 0, y: 0, scale: 1 }
+                scale_limits.max = 1;  // максимальный масштаб
+                scale_limits.min = 0.5;  // минимальный масштаб
+                canvas.onmousemove = track_mouse;
+                canvas.onwheel = zoom;
+                canvas.onwheelscroll = zoom;
+                canvas.onmousedown = start_drag;
+                canvas.onmouseup = stop_drag;
+                canvas.onmouseout = stop_drag;
+                canvas.width = img.width;
+                canvas.height = img.height;
+
+                draw();  // начальный запуск (будет подхвачен через requestAnimationFrame)
+
+                $("#canvas").removeAttr("data-caman-id");
+            }
+        }, false);
+    });
+
+    /* Скачивание отредактированного изображения */
+    $('#download-btn').on('click', function (e) {
+        var fileExtension = fileName.slice(-4);
+        if (fileExtension == '.jpg' || fileExtension == '.png') {
+            var actualName = fileName.substring(0, fileName.length - 4);
+        }
+        download(canvas, actualName + '-edited.jpg');  // вызываем функцию для формирования файла
+    });
 
     /* Сброс изменений */
     $('#reset-btn').on('click', function (e) {
@@ -158,77 +170,90 @@ $(document).ready(function() {
     });
 
     /* Реализация фильтров */
-    Caman.Filter.register("oldpaper", function() {
-        this.pinhole();
-        this.noise(10);
-        this.orangePeel();
-        this.render();
-    });
     $('#oldpaper-btn').on('click', function (e) {
         Caman('#canvas', img, function () {
-            console.log("Applying filter");
-            this.oldpaper().render();
+            this.pinhole();
+            this.noise(10);
+            this.orangePeel();
+            this.render(function() {
+                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+            });
         });
     });
 
-    Caman.Filter.register("pleasant", function() {
-        this.colorize(60, 105, 218, 10);
-        this.contrast(10);
-        this.sunrise();
-        this.hazyDays()
-        this.render();
-    });
     $('#pleasant-btn').on('click', function (e) {
         Caman('#canvas', img, function () {
-            this.pleasant().render();
+            this.colorize(60, 105, 218, 10);
+            this.contrast(10);
+            this.sunrise();
+            this.hazyDays();
+            this.render(function() {
+                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+            });
         });
     });
 
     $('#vintage-btn').on('click', function (e) {
         Caman('#canvas', img, function () {
-            this.greyscale().render();
+            this.greyscale().render(function() {
+                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+            });
         });
     });
 
     $('#noise-btn').on('click', function (e) {
         Caman('#canvas', img, function () {
-            this.noise(10).render();
+            this.noise(10).render(function() {
+                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+            });
         });
     });
 
     $('#sharpen-btn').on('click', function (e) {
         Caman('#canvas', img, function () {
-            this.sharpen(20).render();
+            this.sharpen(20).render(function() {
+                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+            });
         });
     });
 
     $('#blur-btn').on('click', function (e) {
         Caman('#canvas', img, function () {
-            this.stackBlur(5).render();
+            this.stackBlur(5).render(function() {
+                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+            });
         });
     });
 
     $('#crossprocess-btn').on('click', function (e) {
         Caman('#canvas', img, function () {
-            this.crossProcess().render();
+            this.crossProcess().render(function() {
+                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+            });
         });
     });
 
     $('#majestic-btn').on('click', function (e) {
         Caman('#canvas', img, function () {
-            this.herMajesty().render();
+            this.herMajesty().render(function() {
+                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+            });
         });
     });
 
     $('#nostalgia-btn').on('click', function (e) {
         Caman('#canvas', img, function () {
-            this.nostalgia().render();
+            this.nostalgia().render(function() {
+                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+            });
         });
     });
 
     $('#lomo-btn').on('click', function (e) {
         Caman('#canvas', img, function () {
-            this.lomo().render();
+            this.lomo().render(function() {
+                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+            });
         });
     });
 
@@ -237,7 +262,9 @@ $(document).ready(function() {
             this.contrast(10);
             this.contrast(10);
             this.jarques();
-            this.render();
+            this.render(function() {
+                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+            });
         });
     });
 
