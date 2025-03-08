@@ -27,55 +27,89 @@
         </div>
         <div class="preview-wrapper" id="preview-wrapper">
             <div class="pos-container" id="pos-container">
-                <div class="pos" id="pos">
+                <div class="pos row" id="pos">
                     <canvas id="canvas"></canvas>
                 </div>
             </div>
         </div>
-        <div class="editor-buttons">
-            <div>
-                <input class="form-control form-control-lg" id="upload-file" type="file">
+        <div class="container text-center">
+            <div class="row text-center">
+                <div class="col-lg-3 d-grid gap-2">
+                    <input class="form-control form-control" id="upload-file" type="file">
+                </div>
+                <div class="offset-lg-1 col-lg-4 d-grid gap-2">
+                    <button type="button" class="btn btn-danger" id="reset-btn">Сброс</button>
+                </div>
+                <div class="col-lg-4 d-grid gap-2">
+                    <button type="button" class="btn btn-success" id="download-btn">Скачать результат</button>
+                </div>
             </div>
-            <button type="button" class="btn btn-danger" id="reset-btn">Сброс</button>
-            <button type="button" class="btn btn-success" id="download-btn">Скачать результат</button>
             <br>
-            <br>
-            <label for="slider" class="form-label">Масштабирование</label>
-            <input type="range" class="form-range" min="1" max="5" step="0.01" id="slider"
-                   oninput="zoomPOS()" onchange="zoomPOS()" value="1">
-            <br>
-            <br>
-            <label for="brightness" class="form-label">Яркость</label>
-            <input type="range" class="form-range" min="-100" max="100" id="brightness" name="brightness"
-                   value="0">
-            <label for="contrast" class="form-label">Контрастность</label>
-            <input type="range" class="form-range" min="-20" max="20" id="contrast" name="contrast"
-                   value="0">
-            <label for="sepia" class="form-label">Сепия</label>
-            <input type="range" class="form-range" min="0" max="100" id="sepia" name="sepia"
-                   value="0">
-            <label for="hue" class="form-label">Оттенок</label>
-            <input type="range" class="form-range" min="0" max="100" id="hue" name="hue"
-                   value="0">
-            <br>
-            <br>
-            <div class="filter">
-                <button type="button" class="btn btn-primary" id="vintage-btn">Обесцвечивание</button>
-                <button type="button" class="btn btn-primary" id="noise-btn">Шум</button>
-                <button type="button" class="btn btn-primary" id="sharpen-btn">Резкость</button>
-                <button type="button" class="btn btn-primary" id="blur-btn">Размытие</button>
-                <button type="button" class="btn btn-primary" id="majestic-btn">Majestic</button>
-                <button type="button" class="btn btn-primary" id="nostalgia-btn">Nostalgia</button>
-                <br>
-                <br>
-                <button type="button" class="btn btn-primary" id="hdr-btn">HDR</button>
-                <button type="button" class="btn btn-primary" id="oldpaper-btn">Старинная бумага</button>
-                <button type="button" class="btn btn-primary" id="pleasant-btn">Pleasant</button>
-                <button type="button" class="btn btn-primary" id="lomo-btn">Lomo</button>
-                <button type="button" class="btn btn-primary" id="crossprocess-btn">Crossprocess</button>
-                <br>
-                <br>
-                <button type="button" class="btn btn-primary" id="pseudo-btn">Псевдоцвет</button>
+            <div class="row">
+                <div class="offset-lg-1 col-lg-2">
+                    <label for="slider" class="form-label">Масштабирование</label>
+                    <input type="range" class="form-range" min="1" max="5" step="0.01" id="slider" value="1">
+                </div>
+                <div class="col-lg-2">
+                    <label for="brightness" class="form-label">Яркость</label>
+                    <input type="range" class="form-range" min="-100" max="100" id="brightness" name="brightness"
+                           value="0">
+                </div>
+                <div class="col-lg-2">
+                    <label for="contrast" class="form-label">Контрастность</label>
+                    <input type="range" class="form-range" min="-20" max="20" id="contrast" name="contrast"
+                           value="0">
+                </div>
+                <div class="col-lg-2">
+                    <label for="sepia" class="form-label">Сепия</label>
+                    <input type="range" class="form-range" min="0" max="100" id="sepia" name="sepia"
+                           value="0">
+                </div>
+                <div class="col-lg-2">
+                    <label for="hue" class="form-label">Оттенок</label>
+                    <input type="range" class="form-range" min="0" max="100" id="hue" name="hue"
+                           value="0">
+                </div>
+                <div class="row g-1">
+                    <div class="col-lg-2 d-grid gap-2">
+                        <button type="button" class="btn btn-primary" id="vintage-btn">Обесцвечивание</button>
+                    </div>
+                    <div class="col-lg-2 d-grid gap-2">
+                        <button type="button" class="btn btn-primary" id="noise-btn">Шум</button>
+                    </div>
+                    <div class="col-lg-2 d-grid gap-2">
+                        <button type="button" class="btn btn-primary" id="sharpen-btn">Резкость</button>
+                    </div>
+                    <div class="col-lg-2 d-grid gap-2">
+                        <button type="button" class="btn btn-primary" id="blur-btn">Размытие</button>
+                    </div>
+                    <div class="col-lg-2 d-grid gap-2">
+                        <button type="button" class="btn btn-primary" id="majestic-btn">Majestic</button>
+                    </div>
+                    <div class="col-lg-2 d-grid gap-2">
+                        <button type="button" class="btn btn-primary" id="nostalgia-btn">Nostalgia</button>
+                    </div>
+                </div>
+                <div class="row g-1">
+                    <div class="col-lg-2 d-grid gap-2">
+                        <button type="button" class="btn btn-primary" id="hdr-btn">HDR</button>
+                    </div>
+                    <div class="col-lg-2 d-grid gap-2">
+                        <button type="button" class="btn btn-primary" id="oldpaper-btn">Старинная бумага</button>
+                    </div>
+                    <div class="col-lg-2 d-grid gap-2">
+                        <button type="button" class="btn btn-primary" id="pleasant-btn">Pleasant</button>
+                    </div>
+                    <div class="col-lg-2 d-grid gap-2">
+                        <button type="button" class="btn btn-primary" id="lomo-btn">Lomo</button>
+                    </div>
+                    <div class="col-lg-2 d-grid gap-2">
+                        <button type="button" class="btn btn-primary" id="crossprocess-btn">Crossprocess</button>
+                    </div>
+                    <div class="col-lg-2 d-grid gap-2">
+                        <button type="button" class="btn btn-primary" id="pseudo-btn">Псевдоцвет</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
