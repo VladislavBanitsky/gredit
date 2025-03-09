@@ -117,6 +117,18 @@ $(document).ready(function() {
         });
     }
 
+    // Слушаем изменение ползунка
+    $('#slider').on('input', function() {
+        // Получаем значение ползунка
+        var scaleValue = Math.abs($(this).val());
+
+        // Обновляем масштаб
+        viewport.scale = scaleValue/100;  // диапазон от 0,1 до 8
+
+        // Применяем новые значения масштаба и перерисовываем изображение
+        draw();
+    });
+
     /* Загрузка изображения на холст */
     $("#upload-file").on("change", function(){
         var file = document.querySelector('#upload-file').files[0];
@@ -130,8 +142,8 @@ $(document).ready(function() {
             img.src = reader.result;
             img.onload = function () {
                 viewport = { x: 0, y: 0, scale: 1 }
-                scale_limits.max = 1;  // максимальный масштаб
-                scale_limits.min = 0.5;  // минимальный масштаб
+                scale_limits.max = 8;  // максимальный масштаб (максимальное уменьшение)
+                scale_limits.min = 0.1;  // минимальный масштаб (максимальное увеличение)
                 canvas.onmousemove = track_mouse;
                 canvas.onwheel = zoom;
                 canvas.onwheelscroll = zoom;
