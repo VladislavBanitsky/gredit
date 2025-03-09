@@ -6,7 +6,8 @@ var fileName = "";
 var mouse = { x: 0, y: 0, is_down: false };  // для отслеживания положения мыши
 var factor = 1.1;  // величина масштабирования
 var viewport = { x: 0, y: 0, scale: 1 };  // положение в левом верхнем углу и масштаб увеличенного изображения
-var drag = { x: 0, y: 0, dx: 0, dy: 0 };  // текущее положение и смещение
+var drag = { x: 0, y: 0, startX: 0, startY: 0, dx: 0, dy: 0 };  // текущее положение и смещение
+var velocity = { dx: 0, dy: 0 };  // скорость перемещения (для плавности)
 var scale_limits = { min: 1, max: 1 };
 var filteredImageData = null; // сохранённое изображение после применения фильтров
                               //(чтобы не сбивались фильтры при перерисовке кадров)
@@ -28,10 +29,30 @@ function download(canvas, filename) {
     }
 }
 
+// Функция для отслеживания перемещения мыши
 function track_mouse(event) {
     let rectangle = canvas.getBoundingClientRect();
     mouse.x = event.clientX - rectangle.left;
     mouse.y = event.clientY - rectangle.top;
+
+    if (mouse.is_down) {  // когда зажата левая клавиша мыши
+        drag.dx = -(mouse.x - drag.startX);  // вычисляем смещение (минус инвертирует направление)
+        drag.dy = -(mouse.y - drag.startY);
+        drag.startX = mouse.x;  // обновляем начальные координаты для следующего перемещения
+        drag.startY = mouse.y;
+    }
+
+    // Интегрируем скорость с добавлением небольшой инерции для плавности
+    velocity.dx += (drag.dx - velocity.dx) * 0.5;
+    velocity.dy += (drag.dy - velocity.dy) * 0.5;
+
+    // Перерисовываем холст с учётом нового смещения
+    viewport.x += velocity.dx;
+    viewport.y += velocity.dy;
+
+    // Ограничиваем перемещение по оси X и Y
+    viewport.x = limit_value(viewport.x, 0, img.width - canvas.width * viewport.scale);
+    viewport.y = limit_value(viewport.y, 0, img.height - canvas.height * viewport.scale);
 }
 
 function limit_value(value, min, max) {
@@ -49,21 +70,22 @@ function zoom(event) {
 }
 
 function start_drag(event) {
-    drag.x = mouse.x;
-    drag.y = mouse.y;
-    mouse.is_down = true;
+    drag.startX = mouse.x;  // сохраняем начальные координаты для вычисления смещения
+    drag.startY = mouse.y;
+    mouse.is_down = true;  // включаем флаг для перетаскивания
 }
 
 function stop_drag(event) {
-    if (mouse.is_down) {
-        viewport.x += drag.dx;
+    if (mouse.is_down) { // если перетаскивание завершено,
+        viewport.x += drag.dx;  // обновляем позицию с учётом смещения
         viewport.y += drag.dy;
     }
-    drag.dx = 0;
+    drag.dx = 0;  // сбрасываем смещение
     drag.dy = 0;
-    mouse.is_down = false;
+    mouse.is_down = false;  // отключаем флаг перетаскивания
 }
 
+// Функция для обновления состояния перемещения изображения с учётом ограничений
 function update() {
     viewport.x = limit_value(viewport.x, 0, img.width - canvas.width * viewport.scale);
     viewport.y = limit_value(viewport.y, 0, img.height - canvas.height * viewport.scale);
