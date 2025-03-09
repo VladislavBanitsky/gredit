@@ -269,24 +269,57 @@ $(document).ready(function() {
     });
 
     $('#pseudo-btn').on('click', function (e) {
-        var file = document.querySelector('#upload-file').files[0];
-        var reader = new FileReader();
-        if (file) {
-            fileName = file.name;
-            reader.readAsDataURL(file);
-        }
-        reader.addEventListener("load", function () {
-            img = new Image();
-            img.src = reader.result;
-            img.onload = function () {
-                canvas.width = img.width;
-                canvas.height = img.height;
-                ctx.drawImage(img, 0, 0, img.width, img.height);
-                ctx.save();
-                newImage = grafi.pseudocolor(ctx.getImageData(0, 0, img.width, img.height))
-                ctx.putImageData(newImage, 0, 0)
-                $("#canvas").removeAttr("data-caman-id");
-            }
-        }, false);
+        filteredImageData = grafi.pseudocolor(ctx.getImageData(0, 0, img.width, img.height))  // сохраняем результат
+        ctx.putImageData(filteredImageData, 0, 0)
+        $("#canvas").removeAttr("data-caman-id");
     });
+
+    $('#red-btn').on('click', function (e) {
+        Caman('#canvas', img, function () {
+            this.channels({
+                red: 155,  // увеличиваем красный канал
+                green: 0,  // убираем зеленый
+                blue: 0  // убираем синий
+            })
+            this.render(function() {
+                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+            });
+        });
+    });
+
+    $('#green-btn').on('click', function (e) {
+        Caman('#canvas', img, function () {
+            this.channels({
+                red: 0,  // убираем красный
+                green: 155,  // увеличиваем зеленый канал
+                blue: 0  // убираем синий
+            })
+            this.render(function() {
+                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+            });
+        });
+    });
+
+    $('#blue-btn').on('click', function (e) {
+        Caman('#canvas', img, function () {
+            this.channels({
+                red: 0,  // убираем красный
+                green: 0,  // убираем зеленый
+                blue: 155  // увеличиваем синий канал
+            })
+            this.render(function() {
+                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+            });
+        });
+    });
+
+    $('#negative-btn').on('click', function (e) {
+        Caman('#canvas', img, function () {
+            this.invert();  // инвертирование (негатив)
+            this.render(function() {
+                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+            });
+        });
+    });
+
 })
