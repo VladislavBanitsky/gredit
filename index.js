@@ -159,14 +159,20 @@ $(document).ready(function() {
 
     /* Сброс изменений */
     $('#reset-btn').on('click', function (e) {
-        Caman('#canvas', img, function () {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);  // очищаем холст
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);  // перерисовываем исходное изображение
+        // Сбрасываем параметры ползунков на 0 (по умолчанию)
+        $('#brightness').val(0);
+        $('#contrast').val(0);
+        $('#sepia').val(0);
+        $('#hue').val(0);
+        // Применяем сброс для фильтров через Caman
+        Caman('#canvas', function() {
             this.revert(false);
-            var cntrst = parseInt($('#contrast').val(0));
-            var sep = parseInt($('#sepia').val(0));
-            var yark = parseInt($('#brightness').val(0));
-            var hue = parseInt($('#hue').val(0));
+            this.render();
             ctx.restore();
         });
+        filteredImageData = null;  // сбрасываем сохранённое изображение
     });
 
     /* Реализация фильтров */
