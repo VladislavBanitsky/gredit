@@ -241,6 +241,15 @@ $(document).ready(function() {
         });
     });
 
+    $('#bw-btn').on('click', function () {
+        Caman('#canvas', function () {
+            // Применяем пороговое преобразование для чёрно-белого эффекта
+            this.greyscale().threshold(128).render(function() {
+                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+            });
+        });
+    });
+
     $('#noise-btn').on('click', function (e) {
         Caman('#canvas', img, function () {
             this.noise(10).render(function() {
@@ -361,5 +370,20 @@ $(document).ready(function() {
             });
         });
     });
+
+    $('#random-color-btn').on('click', function () {
+    Caman('#canvas', function () {
+
+        this.greyscale();  // в оттенки серого
+        Pixastic.revert(canvas);
+        // Применяем случайный цвет для каждого пикселя
+        this.render(function() {
+            // Применяем измененные данные обратно в изображение
+            ctx.putImageData(imageData, 0, 0);
+
+            filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);  // сохраняем результат
+        });
+    });
+});
 
 })
