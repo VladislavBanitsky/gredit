@@ -375,12 +375,15 @@ $(document).ready(function() {
     Caman('#canvas', function () {
 
         this.greyscale();  // в оттенки серого
-        Pixastic.revert(canvas);
+        // Применение случайного цвета
+        this.channels({
+            red: Math.floor(Math.random() * 200),  // красный
+            green: Math.floor(Math.random() * 200),  // зеленый
+            blue: Math.floor(Math.random() * 200)  // синий канал
+        })
+
         // Применяем случайный цвет для каждого пикселя
         this.render(function() {
-            // Применяем измененные данные обратно в изображение
-            ctx.putImageData(imageData, 0, 0);
-
             filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);  // сохраняем результат
         });
     });
