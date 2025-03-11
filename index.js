@@ -1,5 +1,6 @@
 /* Создание элемента Canvas */
-var img = new Image();
+var img = new Image();  // для сохранения загруженного изображения
+var filteredImg = new Image();  // для сохранения обработанного изображения (чтобы не сбивались фильтры при перерисовке кадров)
 var canvas = document.getElementById("canvas")
 var ctx = canvas.getContext("2d");
 var fileName = "";
@@ -9,8 +10,7 @@ var viewport = { x: 0, y: 0, scale: 1 };  // положение в левом в
 var drag = { x: 0, y: 0, startX: 0, startY: 0, dx: 0, dy: 0 };  // текущее положение и смещение
 var velocity = { dx: 0, dy: 0 };  // скорость перемещения (для плавности)
 var scale_limits = { min: 1, max: 1 };
-var filteredImageData = null; // сохранённое изображение после применения фильтров
-                              //(чтобы не сбивались фильтры при перерисовке кадров)
+
 
 function download(canvas, filename) {
     var  e;
@@ -51,8 +51,8 @@ function track_mouse(event) {
     viewport.y += velocity.dy;
 
     // Ограничиваем перемещение по оси X и Y
-    viewport.x = limit_value(viewport.x, 0, img.width - canvas.width * viewport.scale);
-    viewport.y = limit_value(viewport.y, 0, img.height - canvas.height * viewport.scale);
+    viewport.x = limit_value(viewport.x, 0, filteredImg.width - canvas.width * viewport.scale);
+    viewport.y = limit_value(viewport.y, 0, filteredImg.height - canvas.height * viewport.scale);
 }
 
 function limit_value(value, min, max) {
@@ -87,32 +87,27 @@ function stop_drag(event) {
 
 // Функция для обновления состояния перемещения изображения с учётом ограничений
 function update() {
-    viewport.x = limit_value(viewport.x, 0, img.width - canvas.width * viewport.scale);
-    viewport.y = limit_value(viewport.y, 0, img.height - canvas.height * viewport.scale);
+    viewport.x = limit_value(viewport.x, 0, filteredImg.width - canvas.width * viewport.scale);
+    viewport.y = limit_value(viewport.y, 0, filteredImg.height - canvas.height * viewport.scale);
 
     if (mouse.is_down) {
         drag.dx = (drag.x - mouse.x) * viewport.scale;
-        drag.dx = limit_value(drag.dx, -viewport.x, img.width - viewport.x - canvas.width * viewport.scale);
+        drag.dx = limit_value(drag.dx, -viewport.x, filteredImg.width - viewport.x - canvas.width * viewport.scale);
         drag.dy = (drag.y - mouse.y) * viewport.scale;
-        drag.dy = limit_value(drag.dy, -viewport.y, img.height- viewport.y - canvas.height * viewport.scale);
+        drag.dy = limit_value(drag.dy, -viewport.y, filteredImg.height- viewport.y - canvas.height * viewport.scale);
     }
 }
 
 function draw() {
-    // Если фильтрованное изображение существует, используем его
-    if (filteredImageData) {
-        ctx.putImageData(filteredImageData, 0, 0); // Восстанавливаем фильтрованное изображение на холсте
-    } else {
-        // Очистить весь холст
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        canvas.width = img.width;
-        canvas.height = img.height;
-        // Рисуем изображение с учетом масштаба и положения
-        ctx.drawImage(img,
-            viewport.x + drag.dx, viewport.y + drag.dy, canvas.width * viewport.scale, canvas.height * viewport.scale,
-                0, 0, canvas.width, canvas.height);
-        $("#canvas").removeAttr("data-caman-id");
-    }
+    // Очистить весь холст
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    canvas.width = filteredImg.width;
+    canvas.height = filteredImg.height;
+    ctx.drawImage(filteredImg,  // рисуем отфильтрованное изображение
+        viewport.x + drag.dx, viewport.y + drag.dy,
+        canvas.width * viewport.scale, canvas.height * viewport.scale,
+        0, 0, canvas.width, canvas.height
+    );
     // Запрашиваем следующий кадр
     requestAnimationFrame(draw);
 }
@@ -134,7 +129,7 @@ $(document).ready(function() {
             this.sepia(sep);
             this.hue(hu);
             this.render(function() {
-                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
         });
     }
@@ -160,9 +155,9 @@ $(document).ready(function() {
             reader.readAsDataURL(file);
         }
         reader.addEventListener("load", function () {
-            img = new Image();
             img.src = reader.result;
-            img.onload = function () {
+            filteredImg.src = reader.result;
+            filteredImg.onload = function () {
                 viewport = { x: 0, y: 0, scale: 1 }
                 scale_limits.max = 8;  // максимальный масштаб (максимальное уменьшение)
                 scale_limits.min = 0.1;  // минимальный масштаб (максимальное увеличение)
@@ -172,8 +167,8 @@ $(document).ready(function() {
                 canvas.onmousedown = start_drag;
                 canvas.onmouseup = stop_drag;
                 canvas.onmouseout = stop_drag;
-                canvas.width = img.width;
-                canvas.height = img.height;
+                canvas.width = filteredImg.width;
+                canvas.height = filteredImg.height;
 
                 draw();  // начальный запуск (будет подхвачен через requestAnimationFrame)
 
@@ -193,8 +188,6 @@ $(document).ready(function() {
 
     /* Сброс изменений */
     $('#reset-btn').on('click', function (e) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);  // очищаем холст
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);  // перерисовываем исходное изображение
         // Сбрасываем параметры ползунков на 0 (по умолчанию)
         $('#brightness').val(0);
         $('#contrast').val(0);
@@ -206,37 +199,37 @@ $(document).ready(function() {
             this.render();
             ctx.restore();
         });
-        filteredImageData = null;  // сбрасываем сохранённое изображение
+        filteredImg.src = img.src;  // метод draw теперь будет отрисовывать исходное изображение
     });
 
     /* Реализация фильтров */
     $('#oldpaper-btn').on('click', function (e) {
-        Caman('#canvas', img, function () {
+        Caman('#canvas', function () {
             this.pinhole();
             this.noise(10);
             this.orangePeel();
             this.render(function() {
-                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
         });
     });
 
     $('#pleasant-btn').on('click', function (e) {
-        Caman('#canvas', img, function () {
+        Caman('#canvas', function () {
             this.colorize(60, 105, 218, 10);
             this.contrast(10);
             this.sunrise();
             this.hazyDays();
             this.render(function() {
-                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
         });
     });
 
     $('#vintage-btn').on('click', function (e) {
-        Caman('#canvas', img, function () {
+        Caman('#canvas', function () {
             this.greyscale().render(function() {
-                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
         });
     });
@@ -245,148 +238,148 @@ $(document).ready(function() {
         Caman('#canvas', function () {
             // Применяем пороговое преобразование для чёрно-белого эффекта
             this.greyscale().threshold(128).render(function() {
-                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
         });
     });
 
     $('#noise-btn').on('click', function (e) {
-        Caman('#canvas', img, function () {
+        Caman('#canvas', function () {
             this.noise(10).render(function() {
-                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
         });
     });
 
     $('#sharpen-btn').on('click', function (e) {
-        Caman('#canvas', img, function () {
+        Caman('#canvas', function () {
             this.sharpen(20).render(function() {
-                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
         });
     });
 
     $('#blur-btn').on('click', function (e) {
-        Caman('#canvas', img, function () {
+        Caman('#canvas', function () {
             this.stackBlur(5).render(function() {
-                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
         });
     });
 
     $('#crossprocess-btn').on('click', function (e) {
-        Caman('#canvas', img, function () {
+        Caman('#canvas', function () {
             this.crossProcess().render(function() {
-                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
         });
     });
 
     $('#majestic-btn').on('click', function (e) {
-        Caman('#canvas', img, function () {
+        Caman('#canvas', function () {
             this.herMajesty().render(function() {
-                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
         });
     });
 
     $('#nostalgia-btn').on('click', function (e) {
-        Caman('#canvas', img, function () {
+        Caman('#canvas', function () {
             this.nostalgia().render(function() {
-                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
         });
     });
 
     $('#lomo-btn').on('click', function (e) {
-        Caman('#canvas', img, function () {
+        Caman('#canvas', function () {
             this.lomo().render(function() {
-                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
         });
     });
 
     $('#hdr-btn').on('click', function (e) {
-        Caman('#canvas', img, function () {
+        Caman('#canvas', function () {
             this.contrast(10);
             this.contrast(10);
             this.jarques();
             this.render(function() {
-                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
         });
     });
 
     $('#pseudo-btn').on('click', function (e) {
-        filteredImageData = grafi.pseudocolor(ctx.getImageData(0, 0, img.width, img.height))  // сохраняем результат
-        ctx.putImageData(filteredImageData, 0, 0)
+        var filteredImageData = grafi.pseudocolor(ctx.getImageData(0, 0, filteredImg.width, filteredImg.height));  // сохраняем результат
+        ctx.putImageData(filteredImageData, 0, 0);
+        filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
         $("#canvas").removeAttr("data-caman-id");
     });
 
     $('#red-btn').on('click', function (e) {
-        Caman('#canvas', img, function () {
+        Caman('#canvas', function () {
             this.channels({
                 red: 155,  // увеличиваем красный канал
                 green: 0,  // убираем зеленый
                 blue: 0  // убираем синий
             })
             this.render(function() {
-                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
         });
     });
 
     $('#green-btn').on('click', function (e) {
-        Caman('#canvas', img, function () {
+        Caman('#canvas', function () {
             this.channels({
                 red: 0,  // убираем красный
                 green: 155,  // увеличиваем зеленый канал
                 blue: 0  // убираем синий
             })
             this.render(function() {
-                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
         });
     });
 
     $('#blue-btn').on('click', function (e) {
-        Caman('#canvas', img, function () {
+        Caman('#canvas', function () {
             this.channels({
                 red: 0,  // убираем красный
                 green: 0,  // убираем зеленый
                 blue: 155  // увеличиваем синий канал
             })
             this.render(function() {
-                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
         });
     });
 
     $('#negative-btn').on('click', function (e) {
-        Caman('#canvas', img, function () {
+        Caman('#canvas', function () {
             this.invert();  // инвертирование (негатив)
             this.render(function() {
-                filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height); // сохраняем результат
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
         });
     });
 
     $('#random-color-btn').on('click', function () {
-    Caman('#canvas', function () {
+        Caman('#canvas', function () {
 
-        this.greyscale();  // в оттенки серого
-        // Применение случайного цвета
-        this.channels({
-            red: Math.floor(Math.random() * 200),  // красный
-            green: Math.floor(Math.random() * 200),  // зеленый
-            blue: Math.floor(Math.random() * 200)  // синий канал
-        })
+            this.greyscale();  // в оттенки серого
+            // Применение случайного цвета
+            this.channels({
+                red: Math.floor(Math.random() * 200),  // красный
+                green: Math.floor(Math.random() * 200),  // зеленый
+                blue: Math.floor(Math.random() * 200)  // синий канал
+            })
 
-        // Применяем случайный цвет для каждого пикселя
-        this.render(function() {
-            filteredImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);  // сохраняем результат
+            // Применяем случайный цвет для каждого пикселя
+            this.render(function() {
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
+            });
         });
     });
-});
-
 })
