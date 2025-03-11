@@ -12,11 +12,23 @@ var velocity = { dx: 0, dy: 0 };  // скорость перемещения (д
 var scale_limits = { min: 1, max: 1 };
 
 
+// Функция для сброса масштаба
+function reset_scale() {
+    // Сохраняем начальные значения масштаба и смещения
+    viewport.scale = 1;  // Устанавливаем исходный масштаб
+    viewport.x = 0;      // Устанавливаем исходные координаты по X
+    viewport.y = 0;      // Устанавливаем исходные координаты по Y
+
+    // Обновляем изображение на холсте с учетом сброса масштаба
+    draw();  // Перерисовываем изображение с обновленными параметрами
+}
+
+// Функция для скачивания изображения
 function download(canvas, filename) {
     var  e;
-    var lnk = document.createElement('a');
+    var lnk = document.createElement('a');  // для ссылки на скачивание
 
-    lnk.download = filename;
+    lnk.download = fileName;
     lnk.href = canvas.toDataURL("image/jpeg", 0.8);
 
     if (document.createEvent) {
@@ -114,36 +126,67 @@ function draw() {
 
 /* Сохранение исходных параметров изображения */
 $(document).ready(function() {
-    /* Сохранение параметров изображения, заданных изменением ползунков */
-    $('input[type=range]').change(applyFilters);
 
-    function applyFilters() {
-        var yark = parseInt($('#brightness').val());
-        var cntrst = parseInt($('#contrast').val());
-        var sep = parseInt($('#sepia').val());
-        var hu = parseInt($('#hue').val());
+    // Слушаем изменение ползунка масштаба
+    $('#slider').on('input', function() {
+        // Получаем значение ползунка
+        var scaleValue = Math.abs($(this).val());
+        // Обновляем масштаб
+        viewport.scale = scaleValue/100;  // диапазон от 0,1 до 8
+        // Применяем новые значения масштаба и перерисовываем изображение
+        draw();
+    });
+
+    // Слушаем изменение ползунка яркости
+    $('#brightness').on('input', function() {
+        reset_scale();  // сбрасываем масштаб
         Caman('#canvas', function () {
             this.revert(false);
-            this.brightness(yark);
-            this.contrast(cntrst);
-            this.sepia(sep);
-            this.hue(hu);
+            this.brightness(parseInt($('#brightness').val()));
             this.render(function() {
                 filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
         });
-    }
+        draw();  // применяем изменения
+    });
 
-    // Слушаем изменение ползунка
-    $('#slider').on('input', function() {
-        // Получаем значение ползунка
-        var scaleValue = Math.abs($(this).val());
+    // Слушаем изменение ползунка контрастности
+    $('#contrast').on('input', function() {
+        reset_scale();  // сбрасываем масштаб
+        Caman('#canvas', function () {
+            this.revert(false);
+            this.contrast(parseInt($('#contrast').val()));
+            this.render(function() {
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
+            });
+        });
+        draw();  // применяем изменения
+    });
 
-        // Обновляем масштаб
-        viewport.scale = scaleValue/100;  // диапазон от 0,1 до 8
+    // Слушаем изменение ползунка сепии
+    $('#sepia').on('input', function() {
+        reset_scale();  // сбрасываем масштаб
+        Caman('#canvas', function () {
+            this.revert(false);
+            this.sepia(parseInt($('#sepia').val()));
+            this.render(function() {
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
+            });
+        });
+        draw();  // применяем изменения
+    });
 
-        // Применяем новые значения масштаба и перерисовываем изображение
-        draw();
+    // Слушаем изменение ползунка оттенка
+    $('#hue').on('input', function() {
+        reset_scale();  // сбрасываем масштаб
+        Caman('#canvas', function () {
+            this.revert(false);
+            this.hue(parseInt($('#hue').val()));
+            this.render(function() {
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
+            });
+        });
+        draw();  // применяем изменения
     });
 
     /* Загрузка изображения на холст */
@@ -183,7 +226,8 @@ $(document).ready(function() {
         if (fileExtension == '.jpg' || fileExtension == '.png') {
             var actualName = fileName.substring(0, fileName.length - 4);
         }
-        download(canvas, actualName + '-edited.jpg');  // вызываем функцию для формирования файла
+        reset_scale();  // сбрасываем масштаб
+        download(canvas, actualName + '-edited.jpg');  // вызываем функцию для скачивания файла
     });
 
     /* Сброс изменений */
@@ -204,6 +248,7 @@ $(document).ready(function() {
 
     /* Реализация фильтров */
     $('#oldpaper-btn').on('click', function (e) {
+        reset_scale();
         Caman('#canvas', function () {
             this.pinhole();
             this.noise(10);
@@ -215,6 +260,7 @@ $(document).ready(function() {
     });
 
     $('#pleasant-btn').on('click', function (e) {
+        reset_scale();
         Caman('#canvas', function () {
             this.colorize(60, 105, 218, 10);
             this.contrast(10);
@@ -227,6 +273,7 @@ $(document).ready(function() {
     });
 
     $('#vintage-btn').on('click', function (e) {
+        reset_scale();
         Caman('#canvas', function () {
             this.greyscale().render(function() {
                 filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
@@ -235,6 +282,7 @@ $(document).ready(function() {
     });
 
     $('#bw-btn').on('click', function () {
+        reset_scale();
         Caman('#canvas', function () {
             // Применяем пороговое преобразование для чёрно-белого эффекта
             this.greyscale().threshold(128).render(function() {
@@ -244,6 +292,7 @@ $(document).ready(function() {
     });
 
     $('#noise-btn').on('click', function (e) {
+        reset_scale();
         Caman('#canvas', function () {
             this.noise(10).render(function() {
                 filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
@@ -252,6 +301,7 @@ $(document).ready(function() {
     });
 
     $('#sharpen-btn').on('click', function (e) {
+        reset_scale();
         Caman('#canvas', function () {
             this.sharpen(20).render(function() {
                 filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
@@ -260,6 +310,7 @@ $(document).ready(function() {
     });
 
     $('#blur-btn').on('click', function (e) {
+        reset_scale();
         Caman('#canvas', function () {
             this.stackBlur(5).render(function() {
                 filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
@@ -268,6 +319,7 @@ $(document).ready(function() {
     });
 
     $('#crossprocess-btn').on('click', function (e) {
+        reset_scale();
         Caman('#canvas', function () {
             this.crossProcess().render(function() {
                 filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
@@ -276,6 +328,7 @@ $(document).ready(function() {
     });
 
     $('#majestic-btn').on('click', function (e) {
+        reset_scale();
         Caman('#canvas', function () {
             this.herMajesty().render(function() {
                 filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
@@ -284,6 +337,7 @@ $(document).ready(function() {
     });
 
     $('#nostalgia-btn').on('click', function (e) {
+        reset_scale();
         Caman('#canvas', function () {
             this.nostalgia().render(function() {
                 filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
@@ -292,6 +346,7 @@ $(document).ready(function() {
     });
 
     $('#lomo-btn').on('click', function (e) {
+        reset_scale();
         Caman('#canvas', function () {
             this.lomo().render(function() {
                 filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
@@ -300,6 +355,7 @@ $(document).ready(function() {
     });
 
     $('#hdr-btn').on('click', function (e) {
+        reset_scale();
         Caman('#canvas', function () {
             this.contrast(10);
             this.contrast(10);
@@ -311,6 +367,7 @@ $(document).ready(function() {
     });
 
     $('#pseudo-btn').on('click', function (e) {
+        reset_scale();
         var filteredImageData = grafi.pseudocolor(ctx.getImageData(0, 0, filteredImg.width, filteredImg.height));  // сохраняем результат
         ctx.putImageData(filteredImageData, 0, 0);
         filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
@@ -318,6 +375,7 @@ $(document).ready(function() {
     });
 
     $('#red-btn').on('click', function (e) {
+        reset_scale();
         Caman('#canvas', function () {
             this.channels({
                 red: 155,  // увеличиваем красный канал
@@ -331,6 +389,7 @@ $(document).ready(function() {
     });
 
     $('#green-btn').on('click', function (e) {
+        reset_scale();
         Caman('#canvas', function () {
             this.channels({
                 red: 0,  // убираем красный
@@ -344,6 +403,7 @@ $(document).ready(function() {
     });
 
     $('#blue-btn').on('click', function (e) {
+        reset_scale();
         Caman('#canvas', function () {
             this.channels({
                 red: 0,  // убираем красный
@@ -357,6 +417,7 @@ $(document).ready(function() {
     });
 
     $('#negative-btn').on('click', function (e) {
+        reset_scale();
         Caman('#canvas', function () {
             this.invert();  // инвертирование (негатив)
             this.render(function() {
@@ -366,6 +427,7 @@ $(document).ready(function() {
     });
 
     $('#random-color-btn').on('click', function () {
+        reset_scale();
         Caman('#canvas', function () {
 
             this.greyscale();  // в оттенки серого
