@@ -1,4 +1,21 @@
-/* Масштабирование */
+h1 {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 3.8em;
+    margin-left: 0.5em;
+
+}
+
+a.nav-link {
+    color: #ffffff;
+}
+
+body {
+		background-color: #3f4555;
+		font-family: Helvetica, Arial, FreeSans, san-serif !important;
+		color: #ffffff;
+	}
+
 #pos-container {
     width: 50%;
     min-height: 300px;
