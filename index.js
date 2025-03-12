@@ -78,6 +78,7 @@ function zoom(event) {
     viewport.x = (viewport.x + mouse.x * viewport.scale) - mouse.x * new_scale;
     viewport.y = (viewport.y + mouse.y * viewport.scale) - mouse.y * new_scale;
     viewport.scale = new_scale;
+    update();  // обновляем перемещение изображения с учетом нового масштаба
     event.preventDefault();
 }
 
@@ -113,9 +114,7 @@ function update() {
 function draw() {
     // Очистить весь холст
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    canvas.width = filteredImg.width;
-    canvas.height = filteredImg.height;
-    ctx.drawImage(filteredImg,  // рисуем отфильтрованное изображение
+    ctx.drawImage(filteredImg,
         viewport.x + drag.dx, viewport.y + drag.dy,
         canvas.width * viewport.scale, canvas.height * viewport.scale,
         0, 0, canvas.width, canvas.height
