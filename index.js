@@ -188,6 +188,18 @@ $(document).ready(function() {
         draw();  // применяем изменения
     });
 
+    // Обработчик для кнопки вращения
+    $('#rotate-btn').on('click', function() {
+        reset_scale();  // сбрасываем масштаб
+        Caman('#canvas', function () {
+            this.rotate(90);
+            this.render(function() {
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
+            });
+        });
+        draw();  // применяем изменения
+    });
+
     /* Загрузка изображения на холст */
     $("#upload-file").on("change", function(){
         var file = document.querySelector('#upload-file').files[0];
