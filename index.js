@@ -123,8 +123,51 @@ function draw() {
     requestAnimationFrame(draw);
 }
 
+    Caman.Plugin.register("fliph", function () {
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
+        return this;
+    });
+
+    Caman.Filter.register("fliph", function () {
+        return this.processPlugin("fliph");
+    });
+
+    Caman.Plugin.register("flipv", function () {
+        ctx.translate(0, canvas.height);
+        ctx.scale(1, -1);
+        return this;
+    });
+
+    Caman.Filter.register("flipv", function () {
+        return this.processPlugin("flipv");
+    });
+
 /* Сохранение исходных параметров изображения */
 $(document).ready(function() {
+    /* Обработчик для кнопки отражения по горизонтали */
+    $('#fliph-btn').on('click', function () {
+        reset_scale();  // сбрасываем масштаб
+        Caman('#canvas', function () {
+            this.fliph(function() {
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
+            });
+            this.render();
+        });
+        draw();  // применяем изменения
+    });
+
+    /* Обработчик для кнопки отражения по вертикали */
+    $('#flipv-btn').on('click', function () {
+        reset_scale();  // сбрасываем масштаб
+        Caman('#canvas', function () {
+            this.flipv(function() {
+                filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
+            });
+            this.render();
+        });
+        draw();  // применяем изменения
+    });
 
     // Слушаем изменение ползунка масштаба
     $('#slider').on('input', function() {
