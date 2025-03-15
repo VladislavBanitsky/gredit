@@ -125,8 +125,8 @@ function draw() {
 }
 
     Caman.Plugin.register("fliph", function () {
-        ctx.translate(canvas.width, 0);
-        ctx.scale(-1, 1);
+        ctx.translate(0, canvas.height);
+        ctx.scale(1, -1);
         return this;
     });
 
@@ -135,8 +135,8 @@ function draw() {
     });
 
     Caman.Plugin.register("flipv", function () {
-        ctx.translate(0, canvas.height);
-        ctx.scale(1, -1);
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
         return this;
     });
 
