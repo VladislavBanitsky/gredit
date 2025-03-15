@@ -10,6 +10,7 @@ var viewport = { x: 0, y: 0, scale: 1 };  // положение в левом в
 var drag = { x: 0, y: 0, startX: 0, startY: 0, dx: 0, dy: 0 };  // текущее положение и смещение
 var velocity = { dx: 0, dy: 0 };  // скорость перемещения (для плавности)
 var scale_limits = { min: 1, max: 1 };
+var corner = 0;  // угол поворота
 
 
 // Функция для сброса масштаба
@@ -233,6 +234,10 @@ $(document).ready(function() {
 
     // Обработчик для кнопки вращения
     $('#rotate-btn').on('click', function() {
+        corner += 90;  // увеличиваем счётчик
+        if (corner == 360) {
+            corner = 0;
+        }
         reset_scale();  // сбрасываем масштаб
         Caman('#canvas', function () {
             this.rotate(90);
@@ -294,6 +299,9 @@ $(document).ready(function() {
         // Применяем сброс для фильтров через Caman
         Caman('#canvas', function() {
             this.revert(false);
+            corner = 360 - corner;  // сбрасываем угол поворота на нужное число градусов
+            this.rotate(corner);  // возвращаем угол поворота в 0
+            corner = 0;  // теперь угол поворота 0
             this.render();
             ctx.restore();
         });
