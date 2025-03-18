@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Graphic editor by Vladislav Branitsky</title>
+    <title>Gredit – graphical editor for everyone</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <link rel="icon" href="../static/img/gredit-128.png" type="image/png">
@@ -46,26 +46,26 @@
             <br>
             <div class="row my-3">
                 <div class="offset-lg-1 col-lg-2">
-                    <label for="slider" class="form-label">Scaling</label>
+                    <label for="slider" class="form-label" id="slider-label">Scaling</label>
                     <input type="range" class="form-range" min="-210" max="-10" step="10" id="slider" value="-100">
                 </div>
                 <div class="col-lg-2">
-                    <label for="brightness" class="form-label">Brightness</label>
+                    <label for="brightness" class="form-label" id="brightness-label">Brightness</label>
                     <input type="range" class="form-range" min="-100" max="100" id="brightness" name="brightness"
                            value="0">
                 </div>
                 <div class="col-lg-2">
-                    <label for="contrast" class="form-label">Contrast</label>
+                    <label for="contrast" class="form-label" id="contrast-label">Contrast</label>
                     <input type="range" class="form-range" min="-20" max="20" id="contrast" name="contrast"
                            value="0">
                 </div>
                 <div class="col-lg-2">
-                    <label for="sepia" class="form-label">Sepia</label>
+                    <label for="sepia" class="form-label" id="sepia-label">Sepia</label>
                     <input type="range" class="form-range" min="0" max="100" id="sepia" name="sepia"
                            value="0">
                 </div>
                 <div class="col-lg-2">
-                    <label for="hue" class="form-label">Hue</label>
+                    <label for="hue" class="form-label" id="hue-label">Hue</label>
                     <input type="range" class="form-range" min="0" max="100" id="hue" name="hue"
                            value="0">
                 </div>
@@ -81,7 +81,7 @@
                     <button type="button" class="btn btn-primary" id="vintage-btn">Vintage</button>
                 </div>
                 <div class="col-lg-2 d-grid gap-2">
-                    <button type="button" class="btn btn-primary" id="pseudo-btn">Pseudocolor</button>
+                    <button type="button" class="btn btn-primary" id="pseudo-btn">Pseudo color</button>
                 </div>
                 <div class="col-lg-2 d-grid gap-2">
                     <button type="button" class="btn btn-primary" id="negative-btn">Negative</button>
@@ -145,7 +145,7 @@
     </div>
     <div class="container">
         <footer class="py-3 my-4">
-            <p class="text-center">© 2025 Gredit created by Vladislav Banitsky</p>
+            <p class="text-center" id="info">© 2025 Gredit created by Vladislav Banitsky</p>
         </footer>
     </div>
 </div>
