@@ -155,7 +155,6 @@ $(document).ready(function() {
             });
             this.render();
         });
-        draw();  // применяем изменения
     });
 
     /* Обработчик для кнопки отражения по вертикали */
@@ -167,7 +166,6 @@ $(document).ready(function() {
             });
             this.render();
         });
-        draw();  // применяем изменения
     });
 
     // Слушаем изменение ползунка масштаба
@@ -176,8 +174,6 @@ $(document).ready(function() {
         var scaleValue = Math.abs($(this).val());
         // Обновляем масштаб
         viewport.scale = scaleValue/100;  // диапазон от 0,1 до 8
-        // Применяем новые значения масштаба и перерисовываем изображение
-        draw();
     });
 
     // Слушаем изменение ползунка яркости
@@ -190,7 +186,6 @@ $(document).ready(function() {
                 filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
         });
-        draw();  // применяем изменения
     });
 
     // Слушаем изменение ползунка контрастности
@@ -203,7 +198,6 @@ $(document).ready(function() {
                 filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
         });
-        draw();  // применяем изменения
     });
 
     // Слушаем изменение ползунка сепии
@@ -216,7 +210,6 @@ $(document).ready(function() {
                 filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
         });
-        draw();  // применяем изменения
     });
 
     // Слушаем изменение ползунка оттенка
@@ -229,7 +222,6 @@ $(document).ready(function() {
                 filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
         });
-        draw();  // применяем изменения
     });
 
     // Обработчик для кнопки вращения
@@ -245,7 +237,6 @@ $(document).ready(function() {
                 filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
         });
-        draw();  // применяем изменения
     });
 
     /* Загрузка изображения на холст */
