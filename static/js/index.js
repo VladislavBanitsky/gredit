@@ -431,7 +431,7 @@ $(document).ready(function() {
         reset_scale();
         Caman('#canvas', function () {
             this.channels({
-                red: 155,  // увеличиваем красный канал
+                red: 100,  // максимально увеличиваем красный канал
                 green: 0,  // убираем зеленый
                 blue: 0  // убираем синий
             })
@@ -446,7 +446,7 @@ $(document).ready(function() {
         Caman('#canvas', function () {
             this.channels({
                 red: 0,  // убираем красный
-                green: 155,  // увеличиваем зеленый канал
+                green: 100,  // максимально увеличиваем зеленый канал
                 blue: 0  // убираем синий
             })
             this.render(function() {
@@ -461,7 +461,7 @@ $(document).ready(function() {
             this.channels({
                 red: 0,  // убираем красный
                 green: 0,  // убираем зеленый
-                blue: 155  // увеличиваем синий канал
+                blue: 100  // максимально увеличиваем синий канал
             })
             this.render(function() {
                 filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
@@ -481,14 +481,19 @@ $(document).ready(function() {
 
     $('#random-color-btn').on('click', function () {
         reset_scale();
-        Caman('#canvas', function () {
 
+        // Генерируем случайные значения от 0 до 100
+        var red = Math.floor(Math.random() * 100);
+        var green = Math.floor(Math.random() * 100);
+        var blue = Math.floor(Math.random() * 100);
+
+        Caman('#canvas', function () {
             this.greyscale();  // в оттенки серого
             // Применение случайного цвета
             this.channels({
-                red: Math.floor(Math.random() * 200),  // красный
-                green: Math.floor(Math.random() * 200),  // зеленый
-                blue: Math.floor(Math.random() * 200)  // синий канал
+                red: red,
+                green: green,
+                blue: blue
             })
 
             // Применяем случайный цвет для каждого пикселя
