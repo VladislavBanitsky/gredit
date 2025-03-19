@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title id="title">Графический редактор Владислава Баницкого</title>
+    <title>Gredit – графический редактор для каждого</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <link rel="icon" href="../static/img/gredit-128.png" type="image/png">
@@ -19,7 +19,7 @@
                     <a class="text-decoration-none" target="_blank" href="https://github.com/VladislavBanitsky/gredit">Gredit</a>
                 </h1>
                 <div id="right_column">
-                    <label for="lang_select">Сменить язык:</label>
+                    <label for="lang_select" id="lang_label">Изменить язык:</label>
                     <select name="lang_select" id="lang_select" onchange="changeLanguage(this.options[this.selectedIndex].value)">
                         <option dir="ltr" value="en">🇮🇪/🇬🇧/🇺🇸 English (International)</option>
                         <option dir="ltr" selected="selected" value="ru">🇷🇺 Russian (Русский)</option>
@@ -49,26 +49,26 @@
             <br>
             <div class="row my-3">
                 <div class="offset-lg-1 col-lg-2">
-                    <label for="slider" class="form-label">Масштабирование</label>
+                    <label for="slider" class="form-label" id="slider-label">Масштабирование</label>
                     <input type="range" class="form-range" min="-210" max="-10" step="10" id="slider" value="-100">
                 </div>
                 <div class="col-lg-2">
-                    <label for="brightness" class="form-label">Яркость</label>
+                    <label for="brightness" class="form-label" id="brightness-label">Яркость</label>
                     <input type="range" class="form-range" min="-100" max="100" id="brightness" name="brightness"
                            value="0">
                 </div>
                 <div class="col-lg-2">
-                    <label for="contrast" class="form-label">Контрастность</label>
+                    <label for="contrast" class="form-label" id="contrast-label">Контрастность</label>
                     <input type="range" class="form-range" min="-20" max="20" id="contrast" name="contrast"
                            value="0">
                 </div>
                 <div class="col-lg-2">
-                    <label for="sepia" class="form-label">Сепия</label>
+                    <label for="sepia" class="form-label" id="sepia-label">Сепия</label>
                     <input type="range" class="form-range" min="0" max="100" id="sepia" name="sepia"
                            value="0">
                 </div>
                 <div class="col-lg-2">
-                    <label for="hue" class="form-label">Оттенок</label>
+                    <label for="hue" class="form-label" id="hue-label">Оттенок</label>
                     <input type="range" class="form-range" min="0" max="100" id="hue" name="hue"
                            value="0">
                 </div>
@@ -148,7 +148,7 @@
     </div>
     <div class="container">
         <footer class="py-3 my-4">
-            <p class="text-center">© 2025 Gredit created by Vladislav Banitsky</p>
+            <p class="text-center" id="info">© 2025 Gredit создан Владиславом Баницким</p>
         </footer>
     </div>
 </div>
@@ -158,7 +158,7 @@
         crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/camanjs/4.1.2/caman.full.min.js"></script>
 <script src="../static/js/index.js"></script>
-<script src="../static/js/redirect.js"></script>
+<script src="../static/js/language.js"></script>
 <script src="../static/js/grafi-pseudocolor.js"></script>
 </body>
 </html>
