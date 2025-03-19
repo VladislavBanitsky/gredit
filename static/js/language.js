@@ -100,3 +100,13 @@ function changeLanguage(language) {
     document.getElementById("rotate-btn").textContent = translations[language]["rotate-btn"];
     document.getElementById("info").textContent = translations[language]["info"];
 }
+
+// Автоматическое определение языка браузера
+if (Intl.DateTimeFormat().resolvedOptions().locale == "ru") {
+    changeLanguage("ru");  // смена языка
+    document.getElementById("lang_select").value = "ru";  // выбор в выпадающем списке
+}
+else {
+    changeLanguage("en");  // смена языка
+    document.getElementById("lang_select").value = "en";  // выбор в выпадающем списке
+}
