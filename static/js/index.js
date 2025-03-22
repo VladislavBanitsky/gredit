@@ -13,6 +13,21 @@ var scale_limits = { min: 1, max: 1 };
 var corner = 0;  // угол поворота
 
 
+// Функция для проверки расширения файла
+function isValidFileExtension() {
+    var allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif|\.bmp)$/i;
+    // Файл не содержит допустимого расширения?
+    if (!allowedExtensions.exec(document.querySelector('#upload-file').value)) {
+        document.getElementById("err").textContent = "Файл должен иметь расширение .jpg, .jpeg, .png, .gif, .bmp"
+        document.querySelector('#upload-file').value = '';
+        return false;  // возвращаем ошибку
+    }
+    else {
+        document.getElementById("err").textContent = "";
+        return true;  // ошибку не показываем
+    }
+}
+
 // Функция для сброса масштаба
 function reset_scale() {
     // Сохраняем начальные значения масштаба и смещения
@@ -248,27 +263,30 @@ $(document).ready(function() {
             fileName = file.name;
             reader.readAsDataURL(file);
         }
-        reader.addEventListener("load", function () {
-            img.src = reader.result;
-            filteredImg.src = reader.result;
-            filteredImg.onload = function () {
-                viewport = { x: 0, y: 0, scale: 1 }
-                scale_limits.max = 2.1;  // максимальный масштаб (максимальное уменьшение)
-                scale_limits.min = 0.1;  // минимальный масштаб (максимальное увеличение)
-                canvas.onmousemove = track_mouse;
-                canvas.onwheel = zoom;
-                canvas.onwheelscroll = zoom;
-                canvas.onmousedown = start_drag;
-                canvas.onmouseup = stop_drag;
-                canvas.onmouseout = stop_drag;
-                canvas.width = filteredImg.width;
-                canvas.height = filteredImg.height;
 
-                draw();  // начальный запуск (будет подхвачен через requestAnimationFrame)
+        if (isValidFileExtension()) {  // файл имеет допустимое расширение?
+            reader.addEventListener("load", function () {  // тогда считываем изображение
+                img.src = reader.result;
+                filteredImg.src = reader.result;
+                filteredImg.onload = function () {
+                    viewport = { x: 0, y: 0, scale: 1 }
+                    scale_limits.max = 2.1;  // максимальный масштаб (максимальное уменьшение)
+                    scale_limits.min = 0.1;  // минимальный масштаб (максимальное увеличение)
+                    canvas.onmousemove = track_mouse;
+                    canvas.onwheel = zoom;
+                    canvas.onwheelscroll = zoom;
+                    canvas.onmousedown = start_drag;
+                    canvas.onmouseup = stop_drag;
+                    canvas.onmouseout = stop_drag;
+                    canvas.width = filteredImg.width;
+                    canvas.height = filteredImg.height;
 
-                $("#canvas").removeAttr("data-caman-id");
-            }
-        }, false);
+                    draw();  // начальный запуск (будет подхвачен через requestAnimationFrame)
+
+                    $("#canvas").removeAttr("data-caman-id");
+                }
+            }, false);
+        }
     });
 
     /* Скачивание отредактированного изображения */
