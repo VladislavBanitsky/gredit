@@ -29,7 +29,7 @@ function download(canvas, filename) {
     var  e;
     var lnk = document.createElement('a');  // для ссылки на скачивание
 
-    lnk.download = fileName;
+    lnk.download = filename;
     lnk.href = canvas.toDataURL("image/jpeg", 0.8);
 
     if (document.createEvent) {
@@ -274,11 +274,9 @@ $(document).ready(function() {
     /* Скачивание отредактированного изображения */
     $('#download-btn').on('click', function (e) {
         var fileExtension = fileName.slice(-4);
-        if (fileExtension == '.jpg' || fileExtension == '.png') {
-            var actualName = fileName.substring(0, fileName.length - 4);
-        }
+        var actualName = fileName.substring(0, fileName.length - 4) + '-edited' + fileExtension;
         reset_scale();  // сбрасываем масштаб
-        download(canvas, actualName + '-edited.jpg');  // вызываем функцию для скачивания файла
+        download(canvas, actualName);  // вызываем функцию для скачивания файла
     });
 
     /* Сброс изменений */
