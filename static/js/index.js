@@ -79,8 +79,7 @@ function zoom(event) {
     viewport.x = (viewport.x + mouse.x * viewport.scale) - mouse.x * new_scale;
     viewport.y = (viewport.y + mouse.y * viewport.scale) - mouse.y * new_scale;
     viewport.scale = new_scale;
-    console.log(new_scale);
-    $('#slider').val(-new_scale*100);
+    $('#slider').val(-new_scale*100);  // при прокрутке колеса обновляем значение ползунка
     update();  // обновляем перемещение изображения с учетом нового масштаба
     event.preventDefault();
 }
@@ -254,7 +253,7 @@ $(document).ready(function() {
             filteredImg.src = reader.result;
             filteredImg.onload = function () {
                 viewport = { x: 0, y: 0, scale: 1 }
-                scale_limits.max = 8;  // максимальный масштаб (максимальное уменьшение)
+                scale_limits.max = 2.1;  // максимальный масштаб (максимальное уменьшение)
                 scale_limits.min = 0.1;  // минимальный масштаб (максимальное увеличение)
                 canvas.onmousemove = track_mouse;
                 canvas.onwheel = zoom;
@@ -284,7 +283,7 @@ $(document).ready(function() {
 
     /* Сброс изменений */
     $('#reset-btn').on('click', function (e) {
-        // Сбрасываем параметры ползунков на 0 (по умолчанию)
+        // Сбрасываем параметры ползунков на значения по умолчанию
         $('#slider').val(-100);
         $('#brightness').val(0);
         $('#contrast').val(0);
