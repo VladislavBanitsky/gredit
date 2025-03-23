@@ -70,6 +70,7 @@ const translations = {
 function changeLanguage(language) {
     document.title = translations[language]["title"];
     document.getElementById("lang_label").textContent = translations[language]["lang_label"];
+    document.getElementById("err").textContent = "";  // затираем ошибку
     document.getElementById("reset-btn").textContent = translations[language]["reset-btn"];
     document.getElementById("download-btn").textContent = translations[language]["download-btn"];
     document.getElementById("slider-label").textContent = translations[language]["slider-label"];

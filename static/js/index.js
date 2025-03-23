@@ -18,7 +18,13 @@ function isValidFileExtension() {
     var allowedExtensions = /(\.jpg|\.jpeg|\.png|\.gif|\.bmp)$/i;
     // Файл не содержит допустимого расширения?
     if (!allowedExtensions.exec(document.querySelector('#upload-file').value)) {
-        document.getElementById("err").textContent = "Файл должен иметь расширение .jpg, .jpeg, .png, .gif, .bmp"
+        // Автоматическое определение языка браузера для вывода ошибки на нужном языке
+        if (Intl.DateTimeFormat().resolvedOptions().locale == "ru") {  // для русского языка
+            document.getElementById("err").textContent = "Файл должен иметь расширение .jpg, .jpeg, .png, .gif, .bmp";
+        }
+        else {  // для другого языка
+            document.getElementById("err").textContent = "The file must have an extension .jpg, .jpeg, .png, .gif, .bmp";
+        }
         document.querySelector('#upload-file').value = '';
         return false;  // возвращаем ошибку
     }
