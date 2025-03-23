@@ -298,7 +298,7 @@ $(document).ready(function() {
     /* Скачивание отредактированного изображения */
     $('#download-btn').on('click', function (e) {
         var fileExtension = fileName.slice(-4);
-        var actualName = fileName.substring(0, fileName.length - 4) + '-edited' + fileExtension;
+        var actualName = fileName.substring(0, fileName.length - 4) + '-gredited' + fileExtension;
         reset_scale();  // сбрасываем масштаб
         download(canvas, actualName);  // вызываем функцию для скачивания файла
     });
