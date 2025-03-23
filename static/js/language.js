@@ -1,3 +1,10 @@
+/* GREDIT
+* Реализация функционала смены языка
+* Разработчик: Владислав Баницкий
+* Дата изменения: 23.03.2025
+* Версия: 1.1
+*/
+
 const translations = {
     en: {
         "title": "Gredit – graphical editor for everyone",

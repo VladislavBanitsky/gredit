@@ -1,3 +1,5 @@
+/* https://github.com/grafijs/grafi-pseudocolor/tree/master */
+
 ;(function () {
   /**
     ## ImageData object constructor
