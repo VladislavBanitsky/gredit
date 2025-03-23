@@ -100,7 +100,7 @@ function zoom(event) {
     viewport.x = (viewport.x + mouse.x * viewport.scale) - mouse.x * new_scale;
     viewport.y = (viewport.y + mouse.y * viewport.scale) - mouse.y * new_scale;
     viewport.scale = new_scale;
-    $('#slider').val(-new_scale*100);  // при прокрутке колеса обновляем значение ползунка
+    $('#scale').val(-new_scale*100);  // при прокрутке колеса обновляем значение ползунка
     update();  // обновляем перемещение изображения с учетом нового масштаба
     event.preventDefault();
 }
@@ -191,7 +191,7 @@ $(document).ready(function() {
     });
 
     // Слушаем изменение ползунка масштаба
-    $('#slider').on('input', function() {
+    $('#scale').on('input', function() {
         // Получаем значение ползунка
         var scaleValue = Math.abs($(this).val());
         // Обновляем масштаб
@@ -306,7 +306,7 @@ $(document).ready(function() {
     /* Сброс изменений */
     $('#reset-btn').on('click', function (e) {
         // Сбрасываем параметры ползунков на значения по умолчанию
-        $('#slider').val(-100);
+        $('#scale').val(-100);
         $('#brightness').val(0);
         $('#contrast').val(0);
         $('#sepia').val(0);

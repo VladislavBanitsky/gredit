@@ -4,7 +4,7 @@ const translations = {
         "lang_label": "Change language:",
         "reset-btn": "Reset",
         "download-btn": "Download the result",
-        "slider-label": "Scaling",
+        "scale-label": "Scaling",
         "brightness-label": "Brightness",
         "contrast-label": "Contrast",
         "sepia-label": "Sepia",
@@ -37,7 +37,7 @@ const translations = {
         "lang_label": "Изменить язык:",
         "reset-btn": "Сброс",
         "download-btn": "Скачать результат",
-        "slider-label": "Масштабирование",
+        "scale-label": "Масштабирование",
         "brightness-label": "Яркость",
         "contrast-label": "Контрастность",
         "sepia-label": "Сепия",
@@ -73,7 +73,7 @@ function changeLanguage(language) {
     document.getElementById("err").textContent = "";  // затираем ошибку
     document.getElementById("reset-btn").textContent = translations[language]["reset-btn"];
     document.getElementById("download-btn").textContent = translations[language]["download-btn"];
-    document.getElementById("slider-label").textContent = translations[language]["slider-label"];
+    document.getElementById("scale-label").textContent = translations[language]["scale-label"];
     document.getElementById("brightness-label").textContent = translations[language]["brightness-label"];
     document.getElementById("contrast-label").textContent = translations[language]["contrast-label"];
     document.getElementById("sepia-label").textContent = translations[language]["sepia-label"];
