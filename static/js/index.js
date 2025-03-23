@@ -456,8 +456,8 @@ $(document).ready(function() {
         Caman('#canvas', function () {
             this.channels({
                 red: 100,  // максимально увеличиваем красный канал
-                green: 0,  // убираем зеленый
-                blue: 0  // убираем синий
+                green: 0,
+                blue: 0
             })
             this.render(function() {
                 filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
@@ -469,9 +469,9 @@ $(document).ready(function() {
         reset_scale();
         Caman('#canvas', function () {
             this.channels({
-                red: 0,  // убираем красный
+                red: 0,
                 green: 100,  // максимально увеличиваем зеленый канал
-                blue: 0  // убираем синий
+                blue: 0
             })
             this.render(function() {
                 filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
@@ -483,8 +483,8 @@ $(document).ready(function() {
         reset_scale();
         Caman('#canvas', function () {
             this.channels({
-                red: 0,  // убираем красный
-                green: 0,  // убираем зеленый
+                red: 0,
+                green: 0,
                 blue: 100  // максимально увеличиваем синий канал
             })
             this.render(function() {
@@ -520,7 +520,6 @@ $(document).ready(function() {
                 blue: blue
             })
 
-            // Применяем случайный цвет для каждого пикселя
             this.render(function() {
                 filteredImg.src = canvas.toDataURL("image/jpeg");  // сохраняем текущее изображение
             });
