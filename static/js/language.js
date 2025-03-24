@@ -1,8 +1,8 @@
 /* GREDIT
 * Реализация функционала смены языка
 * Разработчик: Владислав Баницкий
-* Дата изменения: 23.03.2025
-* Версия: 1.1
+* Дата изменения: 24.03.2025
+* Версия: 1.2
 */
 
 const translations = {
@@ -118,3 +118,8 @@ else {
     changeLanguage("en");  // смена языка
     document.getElementById("lang_select").value = "en";  // выбор в выпадающем списке
 }
+
+/* Обработчик для смена языка при выборе в выпадающем списке */
+$('#lang_select').on('change', function (e) {
+    changeLanguage(this.options[this.selectedIndex].value);
+});
